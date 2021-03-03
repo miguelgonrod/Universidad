@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(){
+    srand(time(NULL));
     int aleatorio = 0, numero, contador = 0;
     while(aleatorio == 0){
         aleatorio = rand() % 101;
