@@ -8,6 +8,7 @@ int main(){
         cout << "El numero debe ser distinto de 1: ";
         cin >> numero;
     }
+    cout << "La granizada de " << numero << " es: ";
     while(numero > 1){
         contador++;
         if(numero > max){
@@ -15,13 +16,16 @@ int main(){
         }
         suma += numero;
         if(numero % 2 != 0){
+            cout << numero << " ";
             numero = (3*numero)+1;
         }
         else{
+            cout << numero << " ";
             numero = numero / 2;
         }
     }
+    cout << "1";
     suma += 1;
-    cout << "La longitud es " << contador << ", el maximo es " << max << ", sumatoria es " << suma;
+    cout << "\nLa longitud es " << contador << ", el maximo es " << max << ", sumatoria es " << suma;
     return 0;
 }
