@@ -1,0 +1,4 @@
+nombre    edad    pasatiempo
+Ricardo   15      programar
+Alejandra 20      correr
+Andres    18      leer
