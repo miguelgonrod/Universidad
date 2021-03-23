@@ -10,6 +10,7 @@ void generarNums();
 void calPicas();
 void calFijas();
 void inicio();
+int rendirse();
 
 int main(){
     char again = 's';
@@ -59,6 +60,10 @@ void inicio(){
             cout << "Tiene " << fijas << " fijas y " << picas << " picas\n";
             fijas=0;
             picas=0;
+            if(rendirse() == 1){
+                cout << "El numero era " << ranNum[0] << ranNum[1] << ranNum[2] << ranNum[3] << endl;
+                break;
+            }
         }
     }
     else{
@@ -72,11 +77,12 @@ void inicio(){
                 cout << "Correcto has adivinado\n";
                 break;
             }
-            else{
-                cout << "Tiene " << fijas << " fijas y " << picas << " picas\n";
-                fijas=0;
-                picas=0;
-                turnos--;
+            cout << "Tiene " << fijas << " fijas y " << picas << " picas\n";
+            fijas=0;
+            picas=0;
+            turnos--;
+            if(rendirse() == 1){
+                cout << "El numero era " << ranNum[0] << ranNum[1] << ranNum[2] << ranNum[3] << endl;
             }
         }
     }
@@ -101,4 +107,16 @@ void calPicas(){
         }
     }
     return;
+}
+
+int rendirse(){
+    char rendimiento;
+    cout << "Deseas rendirte? (s/n)\n";
+    cin >> rendimiento;
+    if(rendimiento == 's'){
+        return 1;
+    }
+    else{
+        return 0;
+    }
 }

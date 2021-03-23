@@ -93,7 +93,7 @@ void fecha_valida(){
                     cout << "Ingrese una fecha valida, fecha maxima: " << day << " " << month << " " << year << endl;
                 }
                 else if(mesNac == month){
-                    if(diaNac > month){
+                    if(diaNac > day){
                         ciclo = false;
                         cout << "Ingrese una fecha valida, fecha maxima: " << day << " " << month << " " << year << endl;
                     }
