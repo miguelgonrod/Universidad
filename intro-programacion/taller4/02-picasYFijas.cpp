@@ -20,6 +20,7 @@ int main(){
         cout << "Deseas jugar de nuevo? (s/n)\n";
         cin >> again;
     }
+    return 0;
 }
 
 void generarNums(){
@@ -37,6 +38,7 @@ void generarNums(){
     while(ranNum[3] == ranNum[2] || ranNum[3] == ranNum[1] || ranNum[3] == ranNum[0]){
         ranNum[3] = rand() % 10;
     }
+    return;
 }
 
 void inicio(){
