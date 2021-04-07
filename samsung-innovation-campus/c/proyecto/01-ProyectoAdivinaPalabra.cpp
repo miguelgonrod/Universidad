@@ -33,12 +33,15 @@ char ganador[6][200]={{"+------------+"},
                       {"|************|"},
                       {"+------------+"}};
 
+
 int main(){
     while(true){
         int intentos=5;
         int letrasAdivinadas = 0;
         char palabra[100];
         char letra[1];
+        char letras[100]= {};
+        int contador = 0;
         char adivinado[100];
         int len;
         bool hayPalabra = false;
@@ -55,9 +58,15 @@ int main(){
             ahorcado(intentos);
             printf("Palabra Oculta: %s \n", adivinado);
             printf("Intentos Restantes: %d \n", intentos);
-            printf("Introduzca una letra: ");
+            printf("Letras usadas: ");
+            for(int i = 0; i < strlen(letras); i++){
+                printf("%c ", letras[i]);
+            }
+            printf("\nIntroduzca una letra: ");
             scanf("%c", &letra);
             getchar();
+            letras[contador] = letra[0];
+            contador++;
             for(int i = 0; i < len; i++){
                 if(letra[0]==palabra[i]){
                     adivinado[i]=letra[0];
