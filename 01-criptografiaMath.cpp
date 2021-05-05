@@ -15,12 +15,10 @@ int main(){
         }
     }
     int cont = 1;
-    for(int i = 0; i < m; i++){
-        for(int j = 0; j < n; j++){
-            int val = matriz[i][j];
-            cout << cont;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            int val = matriz[j][i];
             desencriptar(val);
-            cont++;
         }
     }
     return 0;
