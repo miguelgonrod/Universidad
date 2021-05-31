@@ -7,8 +7,10 @@ using namespace std;
 
 int filas, columnas;
 int x = 0, xfinal = 0, y = 0, yfinal = 0;
-int ultx = 0, ulty = 0, dificultad = 0;
+int ultx = 0, ulty = 0, dificultad = 0, filasGuardadas=0, columnasGuardadas=0, turnoGuardado;
 int puntaje = 0, contadorCod=0, contador=0, guardada=0;
+int cantJugadores = 0;
+int burbuja[2][20];
 
 string tablero[42][122] ={{"   ","1","  ","2","  ","3","  ","4","  ","5","  ","6","  ","7","  ","8","  ","9","  ","10"," ","11"," ","12"," ","13"," ","14"," ","15"," ","16"," ","17"," ","18"," ","19"," ","20"," ","21"," ","22"," ","23"," ","24"," ","25"," ","26"," ","27"," ","28"," ","29"," ","30"," ","31"," ","32"," ","33"," ","34"," ","35"," ","36"," ","37"," ","38"," ","39"," ","40"," ","41"," ","42"," ","43"," ","44"," ","45"," ","46"," ","47"," ","48"," ","49"," ","50"," ","51"," ","52"," ","53"," ","54"," ","55"," ","56"," ","57"," ","58"," ","59"," ","60"," ","61"},
                           {" 1 ",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--","."},
@@ -54,17 +56,26 @@ string tablero[42][122] ={{"   ","1","  ","2","  ","3","  ","4","  ","5","  ","6
                           {"21 ",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--",".","--","."}}; 
 
 FILE *jugadores;
+FILE *temporal;
+FILE *reporte;
 
 struct InfoJugadores{
     int codigoJugador;
     char nombre[50];
     char apellido[50];
     char alias[50];
-    int jugados;
-    int ganados;
+    int jugados[4];
+    int ganados[4];
+    int cuadrosComp[4];
 };
 
-void jugar();
+struct Jugando{
+    int  codigo;
+    char alias[50];
+    int puntos;
+};
+
+void jugar(struct InfoJugadores nuevoJug, struct Jugando p[5]);
 void configuraciones();
 void administrarJugadores(struct InfoJugadores nuevoJug);
 void eliminarJug(struct InfoJugadores nuevoJug);
@@ -74,6 +85,7 @@ void eliminar(struct InfoJugadores nuevoJug);
 int main(){
     string temp;
     InfoJugadores nuevoJug;
+    Jugando p[5];
     int menu = 0, salir=0;
     jugadores = fopen("jugadores.txt","r+");
     if(jugadores == NULL){
@@ -85,8 +97,11 @@ int main(){
         strcpy(nuevoJug.nombre,temp.c_str());
         strcpy(nuevoJug.apellido,temp.c_str());
         strcpy(nuevoJug.alias,temp.c_str());
-        nuevoJug.jugados = 0;
-        nuevoJug.ganados = 0;
+        for(int i = 0; i < 4;i++){
+            nuevoJug.jugados[i] = 0;
+            nuevoJug.ganados[i] = 0;
+            nuevoJug.cuadrosComp[i] = 0;
+        }
         fwrite(&nuevoJug,sizeof(nuevoJug),1,jugadores);
         fclose(jugadores);
         jugadores = fopen("jugadores.txt","r+");
@@ -103,7 +118,7 @@ int main(){
         cin >> menu;
         switch(menu){
             case 1:
-                jugar();
+                jugar(nuevoJug, p);
                 break;
             case 2:
                 configuraciones();
@@ -125,8 +140,14 @@ int main(){
     return 0;
 }
 
-void jugar(){
-    int savedstate=0;
+void jugar(struct InfoJugadores nuevoJug, struct Jugando p[5]){
+    string compalias;
+    char compaliaschar[50];
+    int savedstate=0, hay = 0;
+    int turno, ganador = 0;
+    char espacio[5]=" ";
+    char letra[6]="p";
+    strcat(letra,espacio);
     if(dificultad==0){
         cout << "Vuelve al menu y selecciona la dificultad en configuraciones\n";
         return;
@@ -136,6 +157,7 @@ void jugar(){
         cin >> savedstate;
     }
     if(savedstate != 1){
+        cantJugadores = 0;
         for(int i = 0; i < (filas*2)+2;i++){
             for(int j = 0; j < (columnas*2)+2;j++){
                 if(i == (filas*2)+1){
@@ -162,79 +184,309 @@ void jugar(){
             }
         }
     }
+    else{
+        filas = filasGuardadas;
+        columnas = columnasGuardadas;
+    }
+    if(cantJugadores == 0){
+        cout << "Cuantos jugadores van a jugar?: ";
+        cin >> cantJugadores;
+        if(cantJugadores > contador){
+            cout << "Debe crear mas jugadores\n";
+            return;
+        }
+        else{
+            while(cantJugadores < 2 || cantJugadores > 5){
+                cout << "Ingrese un valor entre 2 y 5: ";
+                cin >> cantJugadores;
+            }
+            for(int i = 0; i < cantJugadores; i++){
+                hay = 0;
+                while(hay == 0){
+                    fclose(jugadores);
+                    jugadores = fopen("jugadores.txt","r+");
+                    cout << "Ingrese el alias del jugador " << i+1 << ": ";
+                    getline(cin>>ws,compalias);
+                    strcpy(compaliaschar,compalias.c_str());
+                    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                    while(!feof(jugadores)){
+                        if(strcmp(compaliaschar,nuevoJug.alias) == 0){
+                            p[i].codigo = nuevoJug.codigoJugador;
+                            strcpy(p[i].alias,nuevoJug.alias);
+                            hay = 1;
+                        }
+                        fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                    }
+                    if(hay==0){
+                        cout << "Jugador no encontrado\n";
+                    }
+                    else{
+                        cout << "Jugador ingresado correctamente\n\n";
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    p[0].puntos = 0;
+    p[1].puntos = 0;
+    p[2].puntos = 0;
+    p[3].puntos = 0;
+    p[4].puntos = 0;
+    if(savedstate == 1){
+        turno = turnoGuardado;
+    }
+    else{
+        turno = 1;
+    }
     system("clear"); //si usa windows cambiar a cls creo que era
     cout << "+------------+" << endl;
     cout << "| Bienvenido |" << endl;
     cout << "|     a      |" << endl;
     cout << "|  cuadrito  |" << endl;
     cout << "+------------+\n\n";
-    while(puntaje < ((filas-1)/2)*(columnas-1)/2){
+    while(puntaje < filas*columnas){
         for(int i = 0; i < (filas*2)+2;i++){
             for(int j = 0; j < (columnas*2)+2;j++){
                 cout << tablero[i][j];
             }
             cout << endl;
         }
+        cout << "\nTurno de " << p[turno-1].alias << " -> " << p[turno-1].puntos << " puntos" << "\n\n";
         cout << "\nIngrese la posicion del punto 1 separados por un espacio (x1, y1): ";
         cin >> x >> y;
-        while(x == 0 || x > columnas || y==0 || y > filas){
+        while(x == 0 || x > columnas+1 || y==0 || y > filas+1){
             cout << "Coordenadas incorrectas del punto 1, ingreselas de nuevo:\n";
             cin >> x >> y;
         }
         cout << "Ingrese la posicion del punto 2 separados por un espacio (x2, y2): ";
         cin >> xfinal >> yfinal;
-        while(xfinal == 0 || xfinal > columnas || yfinal==0 || yfinal > filas){
-            cout << "Coordenadas incorrectas del punto 2, ingreselas de nuevo: este\n";
+        while(xfinal == 0 || xfinal > columnas+1 || yfinal==0 || yfinal > filas+1){
+            cout << "Coordenadas incorrectas del punto 2, ingreselas de nuevo: \n";
             cin >> xfinal >> yfinal;
         }
         if(x == -1 || xfinal == -1 || y == -1 || yfinal == -1){
             cout << "partida guardada, regresando al menu\n";
+            filasGuardadas = filas;
+            columnasGuardadas = columnas;
+            turnoGuardado = turno;
             guardada = 1;
-            break;
+            return;
         }
-        while((x+1!=xfinal&&x-1!=xfinal&&x!=xfinal)||(y+1!=yfinal&&y-1!=yfinal&&y!=yfinal)){
-            cout << "Coordenadas incorrectas, ingrese unas nuevas este otro\n";
-            cout << "Ingrese la posicion del punto 1 separados por un espacio (x1, y1): ";
-            cin >> x >> y;
-            cout << "Ingrese la posicion del punto 2 separados por un espacio (x2, y2): ";
-            cin >> xfinal >> yfinal;
+        if(x-1==xfinal&&y==yfinal){
+            ultx = (x*2)-2;
+            ulty = (y*2)-1;
         }
-        while((x-1==xfinal&&y-1==yfinal)||(x-1==xfinal&&y+1==yfinal)||(x+1==xfinal&&y-1==yfinal)||(x+1==xfinal&&y+1==yfinal)){
-            cout << "Coordenadas incorrectas, ingrese unas nuevas lo dudo\n";
-            cout << "Ingrese la posicion del punto 1 separados por un espacio (x1,y1): ";
-            cin >> x >> y;
-            cout << "Ingrese la posicion del punto 2 separados por un espacio (x2,y2): ";
-            cin >> xfinal >> yfinal;
+        else if(x+1==xfinal&&y==yfinal){
+            ultx = (x*2);
+            ulty = (y*2)-1;
+        }
+        else if(x==xfinal&&y-1==yfinal){
+            ultx = (x*2)-1;
+            ulty = (y*2)-2;
+        }
+        else if(x==xfinal&&y+1==yfinal){
+            ultx = (x*2)-1;
+            ulty = (y*2);
+        }
+        while((x+1!=xfinal&&x-1!=xfinal&&x!=xfinal)||(y+1!=yfinal&&y-1!=yfinal&&y!=yfinal)||(x-1==xfinal&&y-1==yfinal)||(x-1==xfinal&&y+1==yfinal)||(x+1==xfinal&&y-1==yfinal)||(x+1==xfinal&&y+1==yfinal) || (x==xfinal&&y==yfinal) || (tablero[ulty][ultx]=="--"||tablero[ulty][ultx]=="|")){
+            if(tablero[ulty][ultx]=="--"||tablero[ulty][ultx]=="|"){
+                cout << "Esas coordenadas ya han sido usadas, ingrese unas nuevas\n";
+                cout << "Ingrese la posicion del punto 1 separados por un espacio (x1, y1): ";
+                cin >> x >> y;
+                cout << "Ingrese la posicion del punto 2 separados por un espacio (x2, y2): ";
+                cin >> xfinal >> yfinal;
+                if(x-1==xfinal&&y==yfinal){
+                    ultx = (x*2)-2;
+                    ulty = (y*2)-1;
+                }
+                else if(x+1==xfinal&&y==yfinal){
+                    ultx = (x*2);
+                    ulty = (y*2)-1;
+                }
+                else if(x==xfinal&&y-1==yfinal){
+                    ultx = (x*2)-1;
+                    ulty = (y*2)-2;
+                }
+                else if(x==xfinal&&y+1==yfinal){
+                    ultx = (x*2)-1;
+                    ulty = (y*2);
+                }
+            }
+            else{
+                cout << "Coordenadas incorrectas, ingrese unas nuevas\n";
+                cout << "Ingrese la posicion del punto 1 separados por un espacio (x1, y1): ";
+                cin >> x >> y;
+                cout << "Ingrese la posicion del punto 2 separados por un espacio (x2, y2): ";
+                cin >> xfinal >> yfinal;
+            }
         }
         if(x-1==xfinal&&y==yfinal){
             ultx = (x*2)-2;
             ulty = (y*2)-1;
             tablero[ulty][ultx]="--";
+            if(tablero[ulty-2][ultx]=="--"&&tablero[ulty-1][ultx-1]=="|"&&tablero[ulty-1][ultx+1]=="|"){
+                p[turno-1].puntos += 1;
+                puntaje++;
+                letra[0] = p[turno-1].alias[0];
+                tablero[ulty-1][ultx] = letra;
+            }
+            if(tablero[ulty+2][ultx]=="--"&&tablero[ulty+1][ultx-1]=="|"&&tablero[ulty+1][ultx+1]=="|"){
+                p[turno-1].puntos+=1;
+                puntaje++;
+                letra[0]=p[turno-1].alias[0];
+                tablero[ulty+1][ultx]=letra;
+            }
         }
         else if(x+1==xfinal&&y==yfinal){
             ultx = (x*2);
             ulty = (y*2)-1;
             tablero[ulty][ultx] = "--";
+            if(tablero[ulty-2][ultx]=="--"&&tablero[ulty-1][ultx-1]=="|"&&tablero[ulty-1][ultx+1]=="|"){
+                p[turno-1].puntos += 1;
+                puntaje++;
+                letra[0]=p[turno-1].alias[0];
+                tablero[ulty-1][ultx] = letra;
+            }
+            if(tablero[ulty+2][ultx]=="--"&&tablero[ulty+1][ultx-1]=="|"&&tablero[ulty+1][ultx+1]=="|"){
+                p[turno-1].puntos+=1;
+                puntaje++;
+                letra[0]=p[turno-1].alias[0];
+                tablero[ulty+1][ultx]=letra;
+            }
         }
         else if(x==xfinal&&y-1==yfinal){
             ultx = (x*2)-1;
             ulty = (y*2)-2;
             tablero[ulty][ultx] = "|";
+            if(tablero[ulty][ultx-2]=="|"&&tablero[ulty+1][ultx-1]=="--"&&tablero[ulty-1][ultx-1]=="--"){
+                p[turno-1].puntos += 1;
+                puntaje++;
+                letra[0]=p[turno-1].alias[0];
+                tablero[ulty][ultx-1]=letra;
+            }
+            if(tablero[ulty][ultx+2]=="|"&&tablero[ulty+1][ultx+1]=="--"&&tablero[ulty-1][ultx+1]=="--"){
+                p[turno-1].puntos += 1;
+                puntaje++;
+                letra[0] = p[turno-1].alias[0];
+                tablero[ulty][ultx+1]=letra;
+            }
         }
         else if(x==xfinal&&y+1==yfinal){
             ultx = (x*2)-1;
             ulty = (y*2);
             tablero[ulty][ultx] = "|";
+            if(tablero[ulty][ultx-2]=="|"&&tablero[ulty+1][ultx-1]=="--"&&tablero[ulty-1][ultx-1]=="--"){
+                p[turno-1].puntos += 1;
+                puntaje++;
+                letra[0]=p[turno-1].alias[0];
+                tablero[ulty][ultx-1]=letra;
+            }
+            if(tablero[ulty][ultx+2]=="|"&&tablero[ulty+1][ultx+1]=="--"&&tablero[ulty-1][ultx+1]=="--"){
+                p[turno-1].puntos += 1;
+                puntaje++;
+                letra[0]=p[turno-1].alias[0];
+                tablero[ulty][ultx+1]=letra;
+            }
+        }
+        if(cantJugadores == 2){
+            if(turno == 1){
+                turno++;
+            }
+            else{
+                turno--;
+            }
+        }
+        else if(cantJugadores == 3){
+            if(turno == 1 || turno == 2){
+                turno++;
+            }
+            else{
+                turno = 1;
+            }
+        }
+        else if(cantJugadores == 4){
+            if(turno == 1 || turno == 2 || turno == 3){
+                turno++;
+            }
+            else{
+                turno = 1;
+            }
+        }
+        else{
+            if(turno == 1 || turno == 2 || turno == 3 || turno == 4){
+                turno++;
+            }
+            else{
+                turno--;
+            }
         }
         system("clear");
+    }
+    for(int i = 0; i < (filas*2)+2;i++){
+        for(int j = 0; j < (columnas*2)+2;j++){
+            cout << tablero[i][j];
+        }
+        cout << endl;
+    }
+    if(p[0].puntos > p[1].puntos && p[0].puntos > p[2].puntos && p[0].puntos > p[3].puntos && p[0].puntos > p[4].puntos){
+        cout << "Ha ganado el jugador 1 con " << p[0].puntos << " puntos\n";
+        ganador = 0;
+    }
+    else if(p[1].puntos > p[0].puntos && p[1].puntos > p[2].puntos && p[1].puntos > p[3].puntos && p[1].puntos > p[4].puntos){
+        cout << "Ha ganado el jugador 2 con " << p[1].puntos << " puntos\n";
+        ganador = 1;
+    }
+    else if(p[2].puntos > p[0].puntos && p[2].puntos > p[1].puntos && p[2].puntos > p[3].puntos && p[2].puntos > p[4].puntos){
+        cout << "Ha ganado el jugador 3 con " << p[2].puntos << " puntos\n";
+        ganador = 2;
+    }
+    else if(p[3].puntos > p[0].puntos && p[3].puntos > p[1].puntos && p[3].puntos > p[2].puntos && p[3].puntos > p[4].puntos){
+        cout << "Ha ganado el jugador 4 con " << p[3].puntos << " puntos\n";
+        ganador = 3;
+    }
+    else if(p[4].puntos > p[0].puntos && p[4].puntos > p[1].puntos && p[4].puntos > p[2].puntos && p[4].puntos > p[3].puntos){
+        cout << "Ha ganado el jugador 5 con " << p[4].puntos << " puntos\n";
+        ganador = 4;
+    }
+    else{
+        cout << "Ha sido un empate\n";
+        ganador = 7;
+    }
+    if(ganador != 7){
+        fclose(jugadores);
+        jugadores = fopen("jugadores.txt","r+");
+        fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+        while(!feof(jugadores)){
+            if(nuevoJug.codigoJugador == p[ganador].codigo){
+                nuevoJug.ganados[dificultad-1] += 1;
+                nuevoJug.cuadrosComp[dificultad-1] += p[ganador].puntos;
+                fseek(jugadores,ftell(jugadores)-sizeof(nuevoJug),SEEK_SET);
+                fwrite(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+            }
+            fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+        }
+    }
+    for(int i = 0; i < cantJugadores; i++){
+        fclose(jugadores);
+        jugadores = fopen("jugadores.txt","r+");
+        fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+        while(!feof(jugadores)){
+            if(p[i].codigo==nuevoJug.codigoJugador){
+                nuevoJug.jugados[dificultad-1] += 1;
+                fseek(jugadores,ftell(jugadores)-sizeof(nuevoJug),SEEK_SET);
+                fwrite(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+            }
+            fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+        }
     }
     return;
 }
 
 void configuraciones(){
-    cout << "Selecciona la dificultad, 1)principiante, 2)intermedio, 3)avanzado, 4)personalizado: \n";
+    cout << "Selecciona la dificultad, 1)principiante, 2)intermedio, 3)avanzado, 4)personalizado 5)regresar: \n";
     cin >> dificultad;
-    while(dificultad < 1 || dificultad > 4){
+    while(dificultad < 1 || dificultad > 5){
         cout << "Opcion invalida, ingrese una nuevamente: ";
         cin >> dificultad;
     }
@@ -252,18 +504,20 @@ void configuraciones(){
             columnas = 30;
             break;
         case 4:
-            cout << "Ingrese la cantidad de filas (1-20): ";
+            cout << "Ingrese la cantidad de filas (2-20): ";
             cin >> filas;
-            while(filas < 1 || filas > 20){
-                cout << "opcion invalida, ingrese un valor entre 1 y 20: ";
+            while(filas < 2 || filas > 20){
+                cout << "opcion invalida, ingrese un valor entre 2 y 20: ";
                 cin >> filas;
             }
-            cout << "Ingrese el numero de columnas (1-60): ";
+            cout << "Ingrese el numero de columnas (2-60): ";
             cin >> columnas;
-            while(columnas < 1 || columnas > 60){
-                cout << "Opcion invalida, ingrese un numero entre 1 y 60: ";
+            while(columnas < 2 || columnas > 60){
+                cout << "Opcion invalida, ingrese un numero entre 2 y 60: ";
                 cin >> columnas;
             }
+            break;
+        case 5:
             break;
     }
     return;
@@ -273,30 +527,28 @@ void eliminar(struct InfoJugadores nuevoJug){
     string compalias, elimtemp;
     char compaliaschar[50];
     int hay = 0;
+    temporal = fopen("temporal.txt","w");
+    fclose(temporal);
+    temporal = fopen("temporal.txt","r+");
     cout << "Ingrese el alias del jugador:\n";
     getline(cin>>ws,compalias);
     strcpy(compaliaschar,compalias.c_str());
     fclose(jugadores);
     jugadores = fopen("jugadores.txt","r+");
     fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
-    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
     while(!feof(jugadores)){
-        if(compalias == nuevoJug.alias){
-            elimtemp = "";
-            strcpy(nuevoJug.nombre,elimtemp.c_str());
-            strcpy(nuevoJug.apellido,elimtemp.c_str());
-            strcpy(nuevoJug.alias,elimtemp.c_str());
-            nuevoJug.codigoJugador = 0;
-            nuevoJug.jugados = 0;
-            nuevoJug.ganados = 0;
-            fseek(jugadores,ftell(jugadores)-sizeof(nuevoJug),SEEK_SET);
-            fwrite(&nuevoJug,sizeof(nuevoJug),1,jugadores);
-            hay=1;
-            break;
+        if(strcmp(nuevoJug.alias,compaliaschar) != 0){
+            fwrite(&nuevoJug,sizeof(nuevoJug),1,temporal);
+            hay = 1;
         }
         fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
     }
-    if(hay == 0){
+    if(hay==1){
+        fcloseall();
+        remove("jugadores.txt");
+        rename("temporal.txt","jugadores.txt");
+    }
+    else{
         cout << "No existe ese alias\n";
     }
     return;
@@ -305,9 +557,9 @@ void eliminar(struct InfoJugadores nuevoJug){
 void administrarJugadores(struct InfoJugadores nuevoJug){
     int jug = 0;
     string temp;
-    cout << "desea 1)crear un jugador 2)eliminar un jugador?: ";
+    cout << "desea 1)crear un jugador 2)eliminar un jugador 3)regresar?: ";
     cin >> jug;
-    while(jug < 1 || jug > 2){
+    while(jug < 1 || jug > 3){
         cout << "Opcion invalida, ingrese una nuevamente: ";
         cin >> jug;
     }
@@ -326,8 +578,11 @@ void administrarJugadores(struct InfoJugadores nuevoJug){
             cout << "Ingrese el alias del jugador:\n";
             getline(cin>>ws,temp);
             strcpy(nuevoJug.alias,temp.c_str());
-            nuevoJug.jugados = 0;
-            nuevoJug.ganados = 0;
+            for(int i = 0; i<4;i++){
+                nuevoJug.jugados[i] = 0;
+                nuevoJug.ganados[i] = 0;
+                nuevoJug.cuadrosComp[i] = 0;
+            }
             fwrite(&nuevoJug,sizeof(nuevoJug),1,jugadores);
             contador ++;
             contadorCod ++;
@@ -337,21 +592,80 @@ void administrarJugadores(struct InfoJugadores nuevoJug){
     else if(jug == 2){
         eliminar(nuevoJug);
     }
+    else if(jug == 3){}
     return;
 }
 
 void estadisticas(struct InfoJugadores nuevoJug){
     int punt = 0;
-    cout << "Deseas 1)Mejores puntajes 2)Informacion jugadores 3)exportar reportes: ";
+    int impDif = 0;
+    int contcont = 0;
+    int aux, aux2;
+    int invertida[2][20];
+    cout << "Deseas 1)Mejores puntajes 2)Informacion jugadores 3)exportar reportes 4)regresar: ";
     cin >> punt;
-    while(punt < 1 || punt > 3){
+    while(punt < 1 || punt > 4){
         cout << "Opcion incorrecta, ingrese una opcion valida: ";
         cin >> punt;
     }
     switch(punt){
         case 1:
+            cout << "Quieres ver los 5 mejores puntajes de que dificultad? 1)prinicpiante 2)intermedio 3)avanzado 4)personalizado: ";
+            cin >> impDif;
+            while(impDif < 1 || impDif > 4){
+                cout << "Opcion incorrecta, ingrese una opcion nuevamente: ";
+                cin >> impDif;
+            }
+            fclose(jugadores);
+            jugadores = fopen("jugadores.txt","r+");
+            fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+            fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+            while(!feof(jugadores)){
+                burbuja[0][contcont]=nuevoJug.codigoJugador;
+                burbuja[1][contcont]=nuevoJug.ganados[impDif-1];
+                contcont++;
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+            }
+            for(int i = 0; i< contador-1; i++){
+                for(int j = 0;j<contador-i-1;j++){
+                    if(burbuja[1][j]>burbuja[1][j+1]){
+                        aux = burbuja[1][j];
+                        burbuja[1][j]=burbuja[1][j+1];
+                        burbuja[1][j+1]=aux;
+                        aux2 = burbuja[0][j];
+                        burbuja[0][j] = burbuja[0][j+1];
+                        burbuja[0][j+1]=aux2;
+                    }
+                }
+            }
+            for(int i = 0; i < contador; i++){
+                invertida[0][contador-1-i]=burbuja[0][i];
+                invertida[1][contador-1-i]=burbuja[1][i];
+            }
+            for(int i = 0; i < 5; i++){
+                fclose(jugadores);
+                jugadores = fopen("jugadores.txt","r+");
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                while(!feof(jugadores)){
+                    if(invertida[0][i]==nuevoJug.codigoJugador){
+                        cout << "Nombre: " << nuevoJug.nombre << " " << nuevoJug.apellido << endl;
+                        cout << "Alias: " << nuevoJug.alias << endl;
+                        cout << "Partidas ganadas: " << nuevoJug.ganados[impDif-1] << endl;
+                        cout << "Cuadros completados: " << nuevoJug.cuadrosComp[impDif-1] << "\n\n";
+                    }
+                    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                }
+            }
             break;
+
         case 2:
+            cout << "Quieres ver las estadisticas de que dificultad? 1)principiante 2)intermedio 3)avanzado 4)personalizado: \n";
+            cin >> impDif;
+            while(impDif < 1 || impDif > 4){
+                cout << "opcion incorrecta, ingrese una opcion nuevamente: ";
+                cin >> impDif;
+            }
             fclose(jugadores);
             jugadores=fopen("jugadores.txt","r+");
             fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
@@ -361,13 +675,15 @@ void estadisticas(struct InfoJugadores nuevoJug){
                     cout << "codigo: " << nuevoJug.codigoJugador << endl;
                     cout << "nombre: " << nuevoJug.nombre << " " << nuevoJug.apellido << endl;
                     cout << "alias: " << nuevoJug.alias << endl;
-                    cout << "Partidas jugadas: " << nuevoJug.jugados << endl;
-                    cout << "Partidas ganadas: " << nuevoJug.ganados << "\n\n";
+                    cout << "Partidas jugadas: " << nuevoJug.jugados[impDif-1] << endl;
+                    cout << "Partidas ganadas: " << nuevoJug.ganados[impDif-1] << "\n\n";
                 }
                 fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
             }
             break;
         case 3:
+            break;
+        case 4:
             break;
     }
     return;
