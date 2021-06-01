@@ -2,8 +2,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
+#include <ctime>
 
 using namespace std;
+
+time_t now = time(0);
+tm *ltm = localtime(&now);
+
+int año = (1900 + ltm->tm_year);
+int mes = (1 + ltm->tm_mon)*10000;
+int dia = (ltm->tm_mday)*1000000;
+string cero = "0";
+
+int fecha = dia+mes+año;
 
 int filas, columnas;
 int x = 0, xfinal = 0, y = 0, yfinal = 0;
@@ -75,16 +87,36 @@ struct Jugando{
     int puntos;
 };
 
+struct ReportadosMejores{
+    int codigo;
+    char nombre[50];
+    char apellido[50];
+    char alias[50];
+    int ganados;
+    int cuadrosComp;
+};
+
+struct ReportadosJugadores{
+    int codigo;
+    char nombre[50];
+    char apellido[50];
+    char alias[50];
+    int jugados;
+    int ganados;
+};
+
 void jugar(struct InfoJugadores nuevoJug, struct Jugando p[5]);
 void configuraciones();
 void administrarJugadores(struct InfoJugadores nuevoJug);
 void eliminarJug(struct InfoJugadores nuevoJug);
-void estadisticas(struct InfoJugadores nuevoJug);
+void estadisticas(struct InfoJugadores nuevoJug, struct ReportadosMejores mejorReportado, struct ReportadosJugadores jugadoresEnReporte);
 void eliminar(struct InfoJugadores nuevoJug);
 
 int main(){
     string temp;
     InfoJugadores nuevoJug;
+    ReportadosMejores mejorReportado;
+    ReportadosJugadores jugadoresEnReporte;
     Jugando p[5];
     int menu = 0, salir=0;
     jugadores = fopen("jugadores.txt","r+");
@@ -127,7 +159,7 @@ int main(){
                 administrarJugadores(nuevoJug);
                 break;
             case 4:
-                estadisticas(nuevoJug);
+                estadisticas(nuevoJug, mejorReportado, jugadoresEnReporte);
                 break;
             case 5:
                 salir = 1;
@@ -596,12 +628,19 @@ void administrarJugadores(struct InfoJugadores nuevoJug){
     return;
 }
 
-void estadisticas(struct InfoJugadores nuevoJug){
+void estadisticas(struct InfoJugadores nuevoJug, struct ReportadosMejores mejorReportado, struct ReportadosJugadores jugadoresEnReporte){
     int punt = 0;
     int impDif = 0;
     int contcont = 0;
     int aux, aux2;
+    int opReporte;
     int invertida[2][20];
+    string fechaStr;
+    string nombreArchivo;
+    char nombreArchivoChar[60];
+    stringstream ss;
+    ss << fecha;
+    ss >> fechaStr;
     cout << "Deseas 1)Mejores puntajes 2)Informacion jugadores 3)exportar reportes 4)regresar: ";
     cin >> punt;
     while(punt < 1 || punt > 4){
@@ -682,6 +721,120 @@ void estadisticas(struct InfoJugadores nuevoJug){
             }
             break;
         case 3:
+            cout << "De que desea generar un reporte? 1)Mejores Puntajes 2)Informacion de Jugadores\n";
+            cin >> opReporte;
+            while(opReporte < 1 || opReporte > 2){
+                cout << "opcion invalida, ingrese una nuevamente: ";
+                cin >> opReporte;
+            }
+            if(opReporte==1){
+                cout << "Quieres exportar los 5 mejores puntajes de que dificultad? 1)prinicpiante 2)intermedio 3)avanzado 4)personalizado: ";
+                cin >> impDif;
+                while(impDif < 1 || impDif > 4){
+                    cout << "Opcion incorrecta, ingrese una opcion nuevamente: ";
+                    cin >> impDif;
+                }
+                if((ltm->tm_mday) < 10){
+                    cero += fechaStr;
+                    fechaStr = cero;
+                }
+                nombreArchivo = "MejoresPuntajes_";
+                nombreArchivo += fechaStr;
+                nombreArchivo += ".csv";
+                strcpy(nombreArchivoChar, nombreArchivo.c_str());
+                reporte = fopen(nombreArchivoChar,"w");
+                fclose(reporte);
+                reporte = fopen(nombreArchivoChar,"r+");
+                fread(&mejorReportado,sizeof(mejorReportado),1,reporte);
+                while(!feof(reporte)){
+                    fread(&mejorReportado,sizeof(mejorReportado),1,reporte);
+                }
+                fclose(jugadores);
+                jugadores = fopen("jugadores.txt","r+");
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                while(!feof(jugadores)){
+                    burbuja[0][contcont]=nuevoJug.codigoJugador;
+                    burbuja[1][contcont]=nuevoJug.ganados[impDif-1];
+                    contcont++;
+                    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                }
+                for(int i = 0; i< contador-1; i++){
+                    for(int j = 0;j<contador-i-1;j++){
+                        if(burbuja[1][j]>burbuja[1][j+1]){
+                            aux = burbuja[1][j];
+                            burbuja[1][j]=burbuja[1][j+1];
+                            burbuja[1][j+1]=aux;
+                            aux2 = burbuja[0][j];
+                            burbuja[0][j] = burbuja[0][j+1];
+                            burbuja[0][j+1]=aux2;
+                        }
+                    }
+                }
+                for(int i = 0; i < contador; i++){
+                    invertida[0][contador-1-i]=burbuja[0][i];
+                    invertida[1][contador-1-i]=burbuja[1][i];
+                }
+                for(int i = 0; i < 5; i++){
+                    fclose(jugadores);
+                    jugadores = fopen("jugadores.txt","r+");
+                    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                    while(!feof(jugadores)){
+                        if(invertida[0][i]==nuevoJug.codigoJugador){
+                            mejorReportado.codigo = nuevoJug.codigoJugador;
+                            strcpy(mejorReportado.nombre,nuevoJug.nombre);
+                            strcpy(mejorReportado.apellido,nuevoJug.apellido);
+                            strcpy(mejorReportado.alias,nuevoJug.alias);
+                            mejorReportado.ganados = nuevoJug.ganados[impDif];
+                            mejorReportado.cuadrosComp = nuevoJug.cuadrosComp[impDif];
+                            fwrite(&mejorReportado,sizeof(mejorReportado),1,reporte);
+                        }
+                        fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                    }
+                }
+                cout << "Reporte generado con exito\n\n";
+            }
+            else if(opReporte==2){
+                cout << "Quieres ver las estadisticas de que dificultad? 1)principiante 2)intermedio 3)avanzado 4)personalizado: \n";
+                cin >> impDif;
+                while(impDif < 1 || impDif > 4){
+                    cout << "opcion incorrecta, ingrese una opcion nuevamente: ";
+                    cin >> impDif;
+                }
+                nombreArchivo = "InformacionJugadores_";
+                if((ltm->tm_mday) < 10){
+                    cero += fechaStr;
+                    fechaStr = cero;
+                }
+                nombreArchivo += fechaStr;
+                nombreArchivo += ".csv";
+                strcpy(nombreArchivoChar, nombreArchivo.c_str());
+                reporte = fopen(nombreArchivoChar,"w");
+                fclose(reporte);
+                reporte = fopen(nombreArchivoChar,"r+");
+                fread(&jugadoresEnReporte,sizeof(jugadoresEnReporte),1,reporte);
+                while(!feof(reporte)){
+                    fread(&jugadoresEnReporte,sizeof(jugadoresEnReporte),1,reporte);
+                }
+                fclose(jugadores);
+                jugadores=fopen("jugadores.txt","r+");
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                while(!feof(jugadores)){
+                    if(nuevoJug.codigoJugador != 0){
+                        jugadoresEnReporte.codigo = nuevoJug.codigoJugador;
+                        strcpy(jugadoresEnReporte.nombre,nuevoJug.nombre);
+                        strcpy(jugadoresEnReporte.apellido,nuevoJug.apellido);
+                        strcpy(jugadoresEnReporte.alias,nuevoJug.alias);
+                        jugadoresEnReporte.jugados = nuevoJug.jugados[impDif-1];
+                        jugadoresEnReporte.ganados = nuevoJug.ganados[impDif-1];
+                        fwrite(&jugadoresEnReporte,sizeof(jugadoresEnReporte),1,reporte);
+                    }
+                    fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+                }
+                cout << "Reporte creado exitosamente\n\n";
+            }
             break;
         case 4:
             break;
