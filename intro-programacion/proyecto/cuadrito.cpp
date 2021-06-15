@@ -143,7 +143,7 @@ int main(){
         fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
         contador++;
     }
-    contador = nuevoJug.codigoJugador;
+    contadorCod = nuevoJug.codigoJugador;
     contadorCod++;
     while(salir==0){
         cout << "Bienvenido, a que menú desea ingresar? 1)jugar 2)configuraciones 3)Administrar jugadores 4)estadisticas 5)salir: ";
@@ -600,6 +600,11 @@ void administrarJugadores(struct InfoJugadores nuevoJug){
             cout << "No quedan jugadores, elimine uno\n";
         }
         else{
+            fclose(jugadores);
+            jugadores = fopen("jugadores.txt","r+");
+            while(!feof(jugadores)){
+                fread(&nuevoJug,sizeof(nuevoJug),1,jugadores);
+            }
             nuevoJug.codigoJugador = contadorCod;
             cout << "Ingrese el nombre del jugador:\n";
             getline(cin>>ws,temp);
