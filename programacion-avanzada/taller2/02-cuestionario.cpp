@@ -3,7 +3,7 @@
 #include <string.h>
 using namespace std;
 
-struct Datos{
+struct Datos{ //crea una estructura donde se almacene el numero de pregunta, la pregunta y las 4 respuestas
     int numPreg;
     char preg[200];
     char res1[50];
@@ -20,7 +20,7 @@ int main(){
         cout << "que opcion desea realizar 1)guardar 2)leer 3)salir: ";
         cin >> opcion;
         if(opcion==1){
-            fstream Destino("Preguntas.txt", ios::app | ios::in | ios::binary);
+            fstream Destino("Preguntas.txt", ios::app | ios::in | ios::binary); // abre el archivo Preguntas.txt en modo escritura binaria
             cout << "ingresa el numero de pregunta: ";
             cin >> preguntas.numPreg;
             cout << "Ingrese la pregunta (no use mas de 200 caracteres):\n";
@@ -38,26 +38,26 @@ int main(){
             cout << "Ingrese la respuesta d:\n";
             getline(cin>>ws, temp);
             strcpy(preguntas.res4, temp.c_str());
-            Destino.write((char *)&preguntas,sizeof(preguntas));
+            Destino.write((char *)&preguntas,sizeof(preguntas)); // escribe en el archivo preguntas.txt el valor de la estructura de datos con el tamaño de la estructura
             cout << "Pregunta guardada correctamente\n\n";
-            Destino.close();
+            Destino.close(); // cierra el archivo
         }
         else if(opcion==2){
             int hay = 0;
-            fstream Leer("Preguntas.txt", ios::in | ios::binary);
+            fstream Leer("Preguntas.txt", ios::in | ios::binary); // abre el archivo original en modo de lectura binaria
             cout << "Ingrese el numero de pregunta: ";
             cin >> bus;
-            while(!Leer.eof()){
-                if(preguntas.numPreg==bus && hay==0){
+            while(!Leer.eof()){ // recorre todo el archivo
+                if(preguntas.numPreg==bus && hay==0){ // revisa si el numero de pregunta es el mismo que estamos buscando
                     cout << preguntas.numPreg << ") " << preguntas.preg << "\n    a) " << preguntas.res1 << "\n    b) " << preguntas.res2 << "\n    c) " << preguntas.res3 << "\n    d) " << preguntas.res4 << "\n\n";
                     hay = 1;
                 }
-                Leer.read((char *)&preguntas,sizeof(preguntas));
+                Leer.read((char *)&preguntas,sizeof(preguntas)); // lee el siguiente registro
             }
             if(hay == 0){
                 cout << "Ese numero de pregunta no existe\n\n";
             }
-            Leer.close();
+            Leer.close(); // cierra el archivo
         }
         else if(opcion==3){
             break;
@@ -66,4 +66,5 @@ int main(){
             cout << "opcion incorrecta, ingrese otra nuevamente\n\n";
         }
     }
+    return 0;
 }

@@ -114,19 +114,19 @@ int main()
                     cin >> palabra1sus;
                     cout << "Ingrese la nueva palabra2: \n";
                     cin >> palabra2sus;
-                    Temp.open("temporal.txt", ios::out);
-                    Leer.open(nombreArchivo, ios::in);
-                    while(Leer>>palabra1>>palabra2>>identificador){
-                        if(buscarId==identificador){
-                            memcpy(palabra1,palabra1sus,sizeof(palabra1sus));
+                    Temp.open("temporal.txt", ios::out); // abro el archivo temporal en formato de escritura
+                    Leer.open(nombreArchivo, ios::in); // abro el archivo original en modo de lectura
+                    while(Leer>>palabra1>>palabra2>>identificador){ // recorro todo el archivo original
+                        if(buscarId==identificador){ // revisa si el id del registro actual es el que estamos buscando
+                            memcpy(palabra1,palabra1sus,sizeof(palabra1sus)); // sustituye las palabras del registro por las que pusimos previamente
                             memcpy(palabra2,palabra2sus,sizeof(palabra2sus));
                         }
-                        Temp << palabra1 << " " << palabra2 << " " << identificador << endl;
+                        Temp << palabra1 << " " << palabra2 << " " << identificador << endl; // guarda cada registro en el archivo temporal
                     }
-                    Temp.close();
-                    Leer.close();
-                    remove("Operacion.txt");
-                    rename("temporal.txt", "Operacion.txt");
+                    Temp.close(); // cierra eñ archivo temporal
+                    Leer.close(); // cierra el archivo original
+                    remove("Operacion.txt"); // elimina el archivo original
+                    rename("temporal.txt", "Operacion.txt"); // convierte el archivo temporal en el nuevo archivo original
                     cout << "El registro ha sido modificado exitosamente\n\n";
                     break;
                 }
@@ -135,17 +135,17 @@ int main()
                 {
                     cout << "Ingrese el id del registro a eliminar: ";
                     cin >> buscarId;
-                    Temp.open("temporal.txt", ios::out);
-                    Leer.open(nombreArchivo, ios::in);
-                    while(Leer>>palabra1>>palabra2>>identificador){
-                        if(buscarId!=identificador){
-                            Temp << palabra1 << " " << palabra2 << " " << identificador << endl;
+                    Temp.open("temporal.txt", ios::out); // abre el archivo temporal en modo escritura
+                    Leer.open(nombreArchivo, ios::in); // abre el archvio original en modo lectura
+                    while(Leer>>palabra1>>palabra2>>identificador){ // recorre todo el archivo original
+                        if(buscarId!=identificador){ // si el id del registro actual no es el que estamos buscando
+                            Temp << palabra1 << " " << palabra2 << " " << identificador << endl; // escribe el registro en el archvo temporal
                         }
-                    }
-                    Temp.close();
-                    Leer.close();
-                    remove("Operacion.txt");
-                    rename("temporal.txt","Operacion.txt");
+                    } // se elimina el registro ya que si el id es el que estamos buscando no escribe el registro en temporal
+                    Temp.close(); // cierra el archivo temporal
+                    Leer.close(); // cierra el archivo original
+                    remove("Operacion.txt"); // elimina el archivo original
+                    rename("temporal.txt","Operacion.txt"); // convierte el archivo temporal en el original
                     cout << "Registro eliminado correctamente\n\n";
                     break;
                 }
