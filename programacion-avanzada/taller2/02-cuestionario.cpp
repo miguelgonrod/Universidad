@@ -13,16 +13,23 @@ struct Datos{ //crea una estructura donde se almacene el numero de pregunta, la 
 };
 
 int main(){
-    int opcion, bus;
+    int opcion, bus, cont = 0;
     string temp;
     Datos preguntas;
     while(true){
         cout << "que opcion desea realizar 1)guardar 2)leer 3)salir: ";
         cin >> opcion;
         if(opcion==1){
+            fstream Leer("Preguntas.txt", ios::in | ios::binary);
+            while(!Leer.eof()){
+                Leer.read((char *)&preguntas,sizeof(preguntas));
+            }
+            if(Leer.good()==true){
+                cont = preguntas.numPreg + 1;
+            }
+            Leer.close();
             fstream Destino("Preguntas.txt", ios::app | ios::in | ios::binary); // abre el archivo Preguntas.txt en modo escritura binaria
-            cout << "ingresa el numero de pregunta: ";
-            cin >> preguntas.numPreg;
+            preguntas.numPreg = cont;
             cout << "Ingrese la pregunta (no use mas de 200 caracteres):\n";
             getline(cin>>ws, temp);
             strcpy(preguntas.preg, temp.c_str());
