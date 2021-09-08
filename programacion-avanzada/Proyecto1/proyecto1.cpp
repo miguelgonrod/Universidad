@@ -16,14 +16,18 @@ struct Usuarios{
 
 void admin();
 void registro();
-void login();
+int login();
 
 int main(){
-    int opcion;
+    int opcion, rol;
     while(true){
         cout << "Deseas 1)Iniciar-sesion 2)registrarse 3)salir: \n";
         cin >> opcion;
         if(opcion==1){
+            rol=login();
+            if(rol==1){}
+            else if(rol==2){}
+            else if(rol==3){}
         }
         else if(opcion==2){
             registro();
@@ -101,7 +105,7 @@ int login(){
                             errores++;
                         }
                         else{
-                            rol = informacion.rol;
+                            rol = informacion.role;
                             break;
                         }
                     }
