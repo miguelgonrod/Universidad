@@ -7,8 +7,8 @@ using namespace std;
 
 struct Usuarios{
     int id;
-    char username[50];
-    char password[20];
+    string username;
+    string password;
     int role;
     char verified;
     char blocked;
@@ -59,18 +59,16 @@ void registro(){
     Leer.close();
     fstream Guardar("Usuarios.txt", ios::app | ios::in | ios::binary);
     cout << "Ingrese el username: ";
-    getline(cin>>ws,temp);
-    strcpy(informacion.username,temp.c_str());
+    getline(cin>>ws,informacion.username);
     cout << "Ingrese la contraseña: ";
-    getline(cin>>ws,temp);
-    strcpy(informacion.password,temp.c_str());
+    getline(cin>>ws,informacion.password);
     cout << "Ingrese el rol 1)admin 2)comprador 3)consulta: ";
     cin >> informacion.role;
     while(informacion.role < 1 || informacion.role > 3){
         cout << "Opcion incorrecta, ingrese otra nuevamente\n";
         cin >> informacion.role;
     }
-    informacion.verified = 'F';
+    informacion.verified = 'V';
     informacion.blocked = 'F';
     informacion.id = cont;
     Guardar.write((char *)&informacion, sizeof(informacion));
@@ -81,38 +79,49 @@ void registro(){
 
 int login(){
     Usuarios informacion;
-    int errores = 0, rol = 0;
-    char username[50], password[20];
+    int errores = 0, rol = 0, log=0;
+    char username_c[50], username_s[50], password_c[50], password_s[50];
+    string password_act;
     string temp;
+    string username_act;
     fstream Leer("Usuarios.txt", ios::in | ios::binary);
     if(Leer.good()==true){
         cout << "Ingrese el username: ";
-        getline(cin>>ws, temp);
-        strcpy(username,temp.c_str());
+        getline(cin>>ws, username_act);
+        strcpy(username_c,username_act.c_str());
+        strcpy(username_s,informacion.username.c_str());
         while(!Leer.eof()){
             Leer.read((char *)&informacion,sizeof(informacion));
-            if(strcmp(username,informacion.username)){
+            if(strcmp(username_c,username_s)!=0){
                 if(informacion.blocked=='T'){
                     cout << "Su cuenta ha sido suspendida por escribir la contraseña mal tres veces, contactese con un administrador\n\n";
                 }
                 else{
                     while(errores!=3){
                         cout << "Ingrese la contraseña: ";
-                        getline(cin>>ws,temp);
-                        strcpy(password,temp.c_str());
-                        if(!strcmp(password,informacion.password)){
-                            cout << "Contraseña incorrecta\n";
-                            errores++;
+                        getline(cin>>ws,password_act);
+                        strcpy(password_c,password_act.c_str());
+                        strcpy(password_s,informacion.password.c_str());
+                        if(strcmp(password_c,password_s)){
+                            rol = informacion.role;
+                            log=1;
+                            break;
                         }
                         else{
-                            rol = informacion.role;
-                            break;
+                            cout << "Contraseña incorrecta\n";
+                            errores++;
                         }
                     }
                     if(errores==3){
                         cout << "Ha realizado 3 intentos incorrectos, su cuenta ha sido suspendida";
                     }
                 }
+            }
+            else{
+                cout << "El usuario no existe\n";
+            }
+            if(log==1){
+                break;
             }
         }
     }
