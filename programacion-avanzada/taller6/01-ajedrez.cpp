@@ -2,6 +2,12 @@
 #include <math.h>
 using namespace std;
 
+/*
+Nombre: potencia
+Objetivo: ejecutarse a si misma la misma cantidad de veces que cuadros tiene un tablero de ajedrez elevando a la n potencia su denominacion numerica para saber cuanto maiz se necesita
+Entradas:  pot y num
+Salidas: long double
+*/
 long double potencia(int pot, int num);
 
 int main(){
