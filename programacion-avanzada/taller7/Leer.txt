@@ -1,0 +1,3 @@
+Porfavor omitir los archivos .class, son el codigo copilado creados por mi compilador, los importantes son los .java
+
+No hice el punto 10 ni comenté los codigos

@@ -13,6 +13,18 @@ public class Figura{
         this.radio = rad;
         this.tipofigura = tip;
     }
+    public void setFigura(int tip){
+        tipofigura = tip;
+    }
+    public void setRadio(double rad){
+        radio = rad;
+    }
+    public void setAlto(double alt){
+        alto = alt;
+    }
+    public void setAncho(double an){
+        ancho = an;
+    }
     public double Area(){
         if(tipofigura==1){
             System.out.println("El area del circulo es: " + "π*" + radio + "² = " + (radio*radio*Math.PI));
