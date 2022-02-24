@@ -1,0 +1,95 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="DC9FDCC2-AD3A-B764-880E-461CBCEEFC30" name="Productos">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:05:31 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<ordsAlias>table_3</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="fabricante" id="6F3BB751-4E72-3BAE-0A51-74110F2EC52A">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:11:53 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>1 CHAR</dataTypeSize>
+<ownDataTypeParameters>1 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="modelo" id="A2B69414-E4F2-37B4-0FC2-6B4AF6BEA694">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:11:53 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>4 CHAR</dataTypeSize>
+<ownDataTypeParameters>4 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="DFDCA735-D7A6-6851-903A-CEE87D27A7AE" referredColumn="F299DC5D-F6C5-DF5E-DF20-F1CE0081801B"/>
+<colAssociation fkAssociation="F94CB27A-364D-1C1E-D99C-23F511D1FD4F" referredColumn="1E7C9871-34C0-4833-CD8B-0F4C57FFD36C"/>
+<colAssociation fkAssociation="B7163EA7-43D1-5FE4-CB74-6F1036663CE7" referredColumn="F6A1A50E-2278-5BCA-CFD1-B4CDFF745644"/>
+</associations>
+</Column>
+<Column name="tipo" id="847C0D62-ACE9-7C25-294E-48F83580B2B1">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:11:53 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>7 CHAR</dataTypeSize>
+<ownDataTypeParameters>7 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="10146578-39FB-8CAE-456C-2A87F3660FBE" name="Productos_PK">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:11:53 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A2B69414-E4F2-37B4-0FC2-6B4AF6BEA694"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="A57EB7C8-EB3C-4A70-CBAB-3C8F92BC4815" name="Productos_PC_FK">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-22 02:46:53 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A2B69414-E4F2-37B4-0FC2-6B4AF6BEA694"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="EDAE71A5-C538-C6E6-4E66-BB5979669D91" name="Productos_Portatiles_FK">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-22 02:47:21 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A2B69414-E4F2-37B4-0FC2-6B4AF6BEA694"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="0571D9B3-CC2C-4F15-42E1-8BF6B53ED528" name="Productos_Impresoras_FK">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-22 02:47:31 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A2B69414-E4F2-37B4-0FC2-6B4AF6BEA694"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

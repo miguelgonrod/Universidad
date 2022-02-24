@@ -1,0 +1,70 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="314CE01A-18D0-10D9-2F2E-4711E30FA5E6" name="Impresoras">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:40:42 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<ordsAlias>table_9</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="modelo" id="F6A1A50E-2278-5BCA-CFD1-B4CDFF745644">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:42:27 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>4 CHAR</dataTypeSize>
+<ownDataTypeParameters>4 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="color" id="94562EEA-DDAD-21C8-9BA6-21A68CA7CADB">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:42:27 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT006</logicalDatatype>
+<dataTypeSize>1</dataTypeSize>
+<ownDataTypeParameters>1,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="tipo" id="CE095173-773D-A5FA-4483-59D76A75758C">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:42:27 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="precio" id="1E416A3D-8639-5552-1499-357A839D403D">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:42:27 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT027</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="0445D63A-E53E-74B9-FCAF-2CFF36A2C0B7" name="Impresoras_PK">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-21 23:43:21 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F6A1A50E-2278-5BCA-CFD1-B4CDFF745644"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

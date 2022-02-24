@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="B7163EA7-43D1-5FE4-CB74-6F1036663CE7" containerWithKeyObject="DC9FDCC2-AD3A-B764-880E-461CBCEEFC30" localFKIndex="0571D9B3-CC2C-4F15-42E1-8BF6B53ED528" name="Productos_Impresoras_FK">
+<createdBy>Miguel</createdBy>
+<createdTime>2022-02-22 02:47:31 UTC</createdTime>
+<ownerDesignName>tarea1_db</ownerDesignName>
+<referredTableLongName>Impresoras</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>314CE01A-18D0-10D9-2F2E-4711E30FA5E6</referredTableID>
+<keyObject>0445D63A-E53E-74B9-FCAF-2CFF36A2C0B7</keyObject>
+<referredKeyID>0445D63A-E53E-74B9-FCAF-2CFF36A2C0B7</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>modelo</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>
