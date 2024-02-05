@@ -3,16 +3,27 @@ version: '3'
 services:
   client:
     image: distribuidosimage
+    volumes:
+      - ./scripts:/home/distribuidos/scripts
     tty: true
     
   calculusServer:
     image: distribuidosimage
+    volumes:
+      - ./scripts:/home/distribuidos/scripts
     tty: true
-    ports:
-      - "65430:65430"
+    expose:
+      - "65430"
+    command: python3 "serverCalculo.py"
   
   operationServer:
     image: distribuidosimage
+    volumes:
+      - ./scripts:/home/distribuidos/scripts
     tty: true
-    ports:
-      - "65433:65433"
+    expose:
+      - "65433"
+    command: python3 "serverOperacion1.py"
+    deploy:
+      mode: replicated
+      replicas: 2

@@ -5,14 +5,15 @@ import random
 
 class calcSocket:
     def __init__(self):
-        self.HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+        self.MYIP = socket.gethostbyname(socket.gethostname())
         self.MYPORT = 65430  # Port to listen on (non-privileged ports are > 1023)
-        self.HOSTPORT = (65433, 65435)  # Ports to the operation servers
+        self.HOSTIP = ("172.20.0.5","172.20.0.2")
+        self.HOSTPORT = 65433  # Ports to the operation servers
         self.servidorNumber = 1         # which server are we going to send the operation
     
     def sendQuery(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((self.HOST, self.MYPORT))   # opens a socket
+            s.bind((self.MYIP, self.MYPORT))   # opens a socket
             while True:
                 s.listen()                     # Wait a message send from the socket
                 conn, addr = s.accept()        # saves the client socket connection and the connection ip addess respectively
@@ -29,12 +30,12 @@ class calcSocket:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as h:
             self.servidorNumber = random.randint(0,1)                       # get a message of which server are we going to send the operation
             try:                                                            # try to connect the gotten server
-                h.connect((self.HOST, self.HOSTPORT[self.servidorNumber]))  # connect to the respective operation server
+                h.connect((self.HOSTIP[self.servidorNumber], self.HOSTPORT))  # connect to the respective operation server
                 h.sendall(data)                                             # sends the operation
                 data = h.recv(1024)                                         # get the operation result
             except:
                 try:
-                    h.connect((self.HOST, self.HOSTPORT[not self.servidorNumber]))   # it negates the value to try to connect to the alternate server
+                    h.connect((self.HOSTIP[not self.servidorNumber], self.HOSTPORT))   # it negates the value to try to connect to the alternate server
                     h.sendall(data)                                                  # sends the operation
                     data = h.recv(1024)                                              # get the operation result
                 except:                                                              # if if none of the servers are available the calculus server calculate the answer

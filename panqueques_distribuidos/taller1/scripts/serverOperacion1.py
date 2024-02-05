@@ -4,7 +4,7 @@ import socket
 
 class operationSocket():
     def __init__(self):
-        self.HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+        self.HOST = socket.gethostbyname(socket.gethostname())  # Standard loopback interface address (localhost)
         self.PORT = 65433  # Port to listen on (non-privileged ports are > 1023)
     
     def calcOperation(self):
